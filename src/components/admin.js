@@ -34,7 +34,7 @@ export default function Admin() {
         let subscribedsTrs2 = allSubscribeds.map((sub, ind) => (
             <tbody>
                 <tr key={ind}>
-                    <td scope="row" >{ind}</td>
+                    <th scope="row" >{ind}</th>
                     <td>{sub.firstName}</td>
                     <td>{sub.lastName}</td>
                     <td>{sub.tz}</td>
@@ -51,6 +51,7 @@ export default function Admin() {
         console.log(e.target.type);
         let pass = e.target.value;
         if (pass == "1234") {
+            setWrongPass(false);
             getAllSubscribeds();
         }
         else {
@@ -64,21 +65,21 @@ export default function Admin() {
             <div class="input-group mb-3 d-flex justify-content-center">
                 <input placeholder="הכנס סיסמת מנהל" aria-label="Recipient's username" aria-describedby="basic-addon2" onBlur={checkPass} />
                 <div class="input-group-append">
-                    <span class="input-group-text" id="basic-addon2">@password</span>
+                    <span class="input-group-text" id="basic-addon2">check password</span>
                 </div>
             </div>
         }
         {wrongPass && <p>קוד שגוי</p>}
         {isShowList &&
-            <table>
+            <table class="table table-bordered">
                 <thead class="thead-dark">
                     <tr>
-                        <td scope="row" >{"מספר"}</td>
-                        <td>שם פרטי</td>
-                        <td>שם משפחה</td>
-                        <td>תעודת זהות</td>
-                        <td>קופת חולים</td>
-                        <td>{"לטופס"}</td>
+                        <td scope="col" >מספר</td>
+                        <td scope="col">שם פרטי</td>
+                        <td scope="col">שם משפחה</td>
+                        <td scope="col">תעודת זהות</td>
+                        <td scope="col">קופת חולים</td>
+                        <td scope="col">לטופס</td>
                     </tr>
                 </thead>
                 {subscribedsTrs}
