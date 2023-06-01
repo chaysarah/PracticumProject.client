@@ -1,16 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from 'react-hook-form';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { signIn, updateChosenUser, updateUser } from '../actions/userSlice';
+import { signIn, updateUser } from '../actions/userSlice';
 
 export default function Form() {
 
     const dispatch = useDispatch();
-
-    const isAxios = useSelector((state) => state.isAxios);
     const chosenPerson = useSelector((state) => state.user.chosenPerson);
-
+    const [isFinished, setIsfinished] = useState(false);
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     const onSubmit = (d) => {
@@ -22,8 +20,8 @@ export default function Form() {
         if (chosenPerson.hMO === "מאוחדת") { finalHMO = 1 }
         if (chosenPerson.hMO === "לאומית") { finalHMO = 3 }
         if (chosenPerson.hMO === "מכבי") { finalHMO = 2 }
-
         dispatch(signIn({ chosenPerson, finalGen, finalHMO }))
+        setIsfinished(true);
     };
 
     const validateChildValues = (target, value) => {
@@ -124,7 +122,7 @@ export default function Form() {
     return chosenPerson ? <>
 
 
-        {!isAxios && <form onSubmit={handleSubmit(onSubmit)}>
+        {!isFinished && <form onSubmit={handleSubmit(onSubmit)}>
             <div class="form-row needs-validation" novalidate>
 
                 <div class="form-group col-md-6">
@@ -211,7 +209,7 @@ export default function Form() {
         {<br></br>}
         {<br></br>}
         {<br></br>}
-        {isAxios && <h3>{chosenPerson.userName}<br></br>פרטיך עודכנו במערכת בהצלחה,<br></br> ! תודה על פניתך ,</h3>}
+        {isFinished && <h3>{chosenPerson.userName}<br></br>פרטיך עודכנו במערכת בהצלחה,<br></br> ! תודה על פניתך ,</h3>}
     </> : <></>
 
 }

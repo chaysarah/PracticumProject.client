@@ -2,20 +2,17 @@ import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const initialState = {
-    count: 2,
     chosenPerson: {
         arrChildrenForms: [],
-        tz: "123456789",
-        userName: "testtt",
+        tz: "",
+        userName: "",
         lastName: "",
         dateOfBirth: new Date(),
-        genus: "נקבה",
+        genus: "",
         hMO: "",
-        numChildren: 2,
+        numChildren: 0,
         isUpdeteChildren: false,
-    },
-
-    isAxios: false
+    }
 };
 
 const userSlice = createSlice({
@@ -46,7 +43,6 @@ const userSlice = createSlice({
                             })
                     })
                 })
-            state.isAxios = true;
         },
         updateChosenUser: (state, action) => {
             state.chosenPerson = action.payload;
