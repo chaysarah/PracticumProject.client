@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createContext } from "react";
 
-export const context= createContext();
+export const context = createContext();
 
 export default function Context(props) {
     const [userName, setUserName] = useState('')
@@ -15,10 +15,12 @@ export default function Context(props) {
     const [isUpdeteChildren, setIsUpdeteChildren] = useState(false)
 
     return (
-        <context.Provider value={{ userName, setUserName,lastName,
-        setLastName,tz,setTz,dateOfBirth,setDateOfBirth,genus,setGenus,hMO,setHMO
-        ,numChildren,setNumChildren,arrChildrenForms,setArrChildrenForms,
-        isUpdeteChildren,setIsUpdeteChildren }}>
+        <context.Provider value={{
+            userName, setUserName, lastName,
+            setLastName, tz, setTz, dateOfBirth, setDateOfBirth, genus, setGenus, hMO, setHMO
+            , numChildren, setNumChildren, arrChildrenForms, setArrChildrenForms,
+            isUpdeteChildren, setIsUpdeteChildren
+        }}>
             {props.children}
         </context.Provider>
     )
