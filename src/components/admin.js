@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateChosenUser } from "../actions/userSlice";
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Admin() {
@@ -10,6 +11,7 @@ export default function Admin() {
     const [subscribedsTrs, setSubscribedsTrs] = useState();
     const [isShowList, setIsShowList] = useState();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     async function getAllSubscribeds() {
         console.log("reached");
@@ -22,6 +24,7 @@ export default function Admin() {
 
     const goToForm = (sub) => {
         dispatch(updateChosenUser(sub));
+        navigate('/form');
     }
 
     const showAllSubscribeds = (allSubscribeds) => {

@@ -2,7 +2,7 @@ import React from "react";
 import { useForm } from 'react-hook-form';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { updateTz } from '../actions/userSlice';
+import { signIn, updateChosenUser, updateUser } from '../actions/userSlice';
 
 export default function Form() {
 
@@ -23,7 +23,7 @@ export default function Form() {
         if (chosenPerson.hMO === "לאומית") { finalHMO = 3 }
         if (chosenPerson.hMO === "מכבי") { finalHMO = 2 }
 
-        dispatch(updateTz(chosenPerson, finalGen, finalHMO))
+        dispatch(signIn({ chosenPerson, finalGen, finalHMO }))
     };
 
     const validateChildValues = (target, value) => {
@@ -32,40 +32,43 @@ export default function Form() {
     }
 
     const updateSingleChild = (target, value, i) => {
-        // pCtx.setArrChildrenForms([...pCtx.arrChildrenForms].map(object => {
-        //     if (object?.index === i) {
-        //         if (validateChildValues(target, value)) {
-        //             return {
-        //                 ...object,
-        //                 error: true
-        //             }
-        //         }
-        //         return {
-        //             ...object,
-        //             [target]: value,
-        //             error: false
-        //         };
-        //     }
-        //     return object;
-        // }
-        // ))
+        let children = [...chosenPerson.arrChildrenForms].map(object => {
+            if (object?.index === i) {
+                if (validateChildValues(target, value)) {
+                    return {
+                        ...object,
+                        error: true
+                    }
+                }
+                return {
+                    ...object,
+                    [target]: value,
+                    error: false
+                };
+            }
+            return object;
+        });
+
+        let updatedUser = { ...chosenPerson, arrChildrenForms: children }
+        dispatch(updateUser(updatedUser));
     }
 
     const updateChildrenForms = (e) => {
         console.log("update")
         let numChildren = e.target.value;
-        // pCtx.setNumChildren(numChildren);
+        dispatch(updateUser({ ...chosenPerson, numChildren }));
 
         let updatedArr = [];
         for (let i = 0; i < numChildren; i++) {
-            if (chosenPerson.arrChildrenForms.length > i) {
+
+            if (chosenPerson.arrChildrenForms && chosenPerson.arrChildrenForms.length > i) {
                 updatedArr.push(chosenPerson.arrChildrenForms[i]);
             }
             else {
-                updatedArr.push({ index: i, name: '', tz: 123456789, dateBirth: new Date(), error: false });
+                updatedArr.push({ index: i, name: '', tz: 123456789, dateOfBirth: new Date(), error: false });
             }
         }
-        // pCtx.setArrChildrenForms(updatedArr);
+        dispatch(updateUser({ ...chosenPerson, arrChildrenForms: updatedArr }));
     }
 
     const getChildrenForms = () => {
@@ -105,7 +108,9 @@ export default function Form() {
                                 id={`DateOfBirth${i}`}
                                 {...register(`dateOfBirth${i}`, { required: true })}
                                 defaultValue={chosenPerson.arrChildrenForms[i]?.dateBirth}
-                                onChange={(e) => { updateSingleChild('dateBirth', e.target.value, i) }} />
+                                onChange={(e) => {
+                                    updateSingleChild('dateBirth', e.target.value, i)
+                                }} />
                             {errors[`dateOfBirth${i}`] && errors.dateOfBirth.type === "required" && <p>שדה חובה</p>}
                         </div>
                         <br />
@@ -125,7 +130,7 @@ export default function Form() {
                 <div class="form-group col-md-6">
                     <label for="FirstName">שם פרטי</label>
                     <input class="form-control" id="FirstName" {...register('firstName', { required: true })} defaultValue={chosenPerson.userName} onChange={(e) => {
-                        // pCtx.setUserName(e.target.value) 
+                        dispatch(updateUser({ ...chosenPerson, userName: e.target.value }));
                     }} />
                     {errors.firstName && <p>שדה חובה</p>}
                 </div>
@@ -137,7 +142,9 @@ export default function Form() {
                             message: 'Please enter valid name',
                             value: /^[א-תA-Za-z\u00C0-\u017F]+(?:\s[א-תa-zA-Z\u00C0-\u017F]+)*$/
                         },
-                    })} defaultValue={chosenPerson.lastName} onChange={(e) => { chosenPerson.setLastName(e.target.value) }} />
+                    })} defaultValue={chosenPerson.lastName} onChange={(e) => {
+                        dispatch(updateUser({ ...chosenPerson, lastName: e.target.value }));
+                    }} />
                     {errors.lastName && errors.lastName.type === "required" && <p>שדה חובה</p>}
                     {errors.lastName && errors.lastName.type !== "required" && <p> הכנס רק אותיות</p>}
                 </div>
@@ -145,7 +152,7 @@ export default function Form() {
                 <div class="form-group col-md-6">
                     <label for="Tz">תעודת זהות</label>
                     <input type="number" class="form-control" id="Tz" {...register('tz', { required: true, validate: (value) => value > 99999999, valueAsNumber: true })} defaultValue={chosenPerson.tz} onChange={(e) => {
-                        // pCtx.setTz(e.target.value) 
+                        dispatch(updateUser({ ...chosenPerson, tz: e.target.value }));
                     }} />
                     {errors.tz && errors.tz.type === "required" && <p>שדה חובה</p>}
                     {errors.tz && errors.tz.type !== "valueAsNumber" && errors.tz.type !== "required" && <p>מינימום 9 תווים</p>}
@@ -156,7 +163,7 @@ export default function Form() {
                     <label for="DateOfBirth">תאריך לידה </label>
                     <input type="date" class="form-control" id="DateOfBirth" {...register('dateOfBirth',
                         { required: true })} defaultValue={chosenPerson.dateOfBirth} onChange={(e) => {
-                            //  pCtx.setDateOfBirth(e.target.value) 
+                            dispatch(updateUser({ ...chosenPerson, dateOfBirth: e.target.value }));
                         }} />
                     {errors.dateOfBirth && errors.dateOfBirth.type === "required" && <p>שדה חובה</p>}
                 </div>
@@ -165,7 +172,7 @@ export default function Form() {
                     <label for="inputState">מין</label>
                     <select id="inputState" class="form-control" {...register('genus', { required: true })}
                         onChange={(e) => {
-                            // pCtx.setGenus(e.target.value) 
+                            dispatch(updateUser({ ...chosenPerson, genus: e.target.value }));
                         }} defaultValue={chosenPerson.genus}>
                         <option selected></option>
                         <option>נקבה</option>
@@ -178,7 +185,7 @@ export default function Form() {
                     <label for="inputState2">קופת חולים</label>
                     <select id="inputState2" class="form-control" {...register('hMO', { required: true })}
                         onChange={(e) => {
-                            //  pCtx.setHMO(e.target.value)
+                            dispatch(updateUser({ ...chosenPerson, hMO: e.target.value }));
                         }} defaultValue={chosenPerson.hMO}>
                         <option selected></option>
                         <option>כללית</option>
@@ -191,7 +198,8 @@ export default function Form() {
 
                 <div class="form-group col-md-6">
                     <label for="NumChildren">מספר ילדים</label>
-                    <input type="number" class="form-control" id="NumChildren" {...register('numOfChildren', { required: true, validate: (value) => value > -1 })} defaultValue={chosenPerson.numChildren} onChange={updateChildrenForms} />
+                    <input type="number" class="form-control" id="NumChildren" {...register('numOfChildren', { required: true, validate: (value) => value > -1 })} defaultValue={chosenPerson.numChildren}
+                        onChange={updateChildrenForms} />
                     {errors.numOfChildren && errors.numOfChildren.type === "required" && <p>שדה חובה</p>}
                     {errors.numOfChildren && errors.numOfChildren.type !== "required" && <p>מספר הילדים אינו יכול להיות שלילי </p>}
                 </div>
@@ -204,9 +212,6 @@ export default function Form() {
         {<br></br>}
         {<br></br>}
         {isAxios && <h3>{chosenPerson.userName}<br></br>פרטיך עודכנו במערכת בהצלחה,<br></br> ! תודה על פניתך ,</h3>}
-
-
-
     </> : <></>
 
 }
