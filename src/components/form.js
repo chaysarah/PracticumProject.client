@@ -3,7 +3,13 @@ import React, { useContext, useState } from "react";
 import { context } from "../context";
 import axios from 'axios';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { increment, decrement } from '../actions/subscribedSlice';
+
 export default function Form() {
+
+    const count = useSelector((state) => state.counter.count);
+    const dispatch = useDispatch();
 
     const pCtx = useContext(context);
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -136,6 +142,12 @@ export default function Form() {
     }
 
     return (<>
+
+    <div>
+         <h1>Count: {count}</h1>
+         <button onClick={() => dispatch(increment())}>Increment</button>
+         <button onClick={() => dispatch(decrement())}>Decrement</button>
+       </div>
 
         {!isAxios && <form onSubmit={handleSubmit(onSubmit)}>
             <div class="form-row needs-validation" novalidate>
