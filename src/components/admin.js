@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 export default function Admin() {
+    const enVar=process.env.REACT_APP_CUSTOM_ENV_VAR;
     const [wrongPass, setWrongPass] = useState(false);
     const [isLoginAdmin, setIsLoginAdmin] = useState(false);
     const [subscribedsTrs, setSubscribedsTrs] = useState();
@@ -15,7 +16,7 @@ export default function Admin() {
 
     async function getAllSubscribeds() {
         console.log("reached");
-        await axios.get(`https://localhost:7070/api/User`).then(res => {
+        await axios.get(`${enVar}/api/User`).then(res => {
             console.log(res.data);
             showAllSubscribeds(res.data);
         });
